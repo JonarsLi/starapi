@@ -121,7 +121,20 @@ class Spec:
                 self.methods[i] = method
 
     def _update_schema(self, serializer: BaseModel) -> None:
-        schema = {serializer.__name__: serializer.schema()}
+        if serializer.schema().get("definitions"):
+            self._update_nested_schema(serializer)
+            return None
+
+        self._update_schemas({serializer.__name__: serializer.schema()})
+
+    def _update_nested_schema(self, serializer: BaseModel) -> None:
+        schema = serializer.schema(ref_template="#/components/schemas/{model}")
+        definitions = schema.pop("definitions")
+        self._update_schemas({serializer.__name__: schema})
+        for key, value in definitions.items():
+            self._update_schemas({key: value})
+
+    def _update_schemas(self, schema: dict) -> None:
         if self.definition.components is None:
             self.definition.components = construct.Schemas(schemas=schema)
             return None

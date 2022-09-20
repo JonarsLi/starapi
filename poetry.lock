@@ -74,6 +74,17 @@ pycodestyle = ">=2.9.0,<2.10.0"
 pyflakes = ">=2.5.0,<2.6.0"
 
 [[package]]
+name = "h11"
+version = "0.13.0"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -267,6 +278,22 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "uvicorn"
+version = "0.18.3"
+description = "The lightning-fast ASGI server."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+click = ">=7.0"
+h11 = ">=0.8"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[package.extras]
+standard = ["colorama (>=0.4)", "httptools (>=0.4.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.0)"]
+
+[[package]]
 name = "zipp"
 version = "3.8.1"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -281,7 +308,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "84db33fbcf4e3ec8b89a0dcfcea91064ab14843275ada6d7e3f0ef5808735ddd"
+content-hash = "6d6ad76fc3dc61ff59bd9901f2b4dfb76e0f5326275150f74369d4ea90fb68b9"
 
 [metadata.files]
 anyio = []
@@ -289,6 +316,7 @@ black = []
 click = []
 colorama = []
 flake8 = []
+h11 = []
 idna = []
 importlib-metadata = []
 isort = []
@@ -308,4 +336,5 @@ starlette = []
 tomli = []
 typed-ast = []
 typing-extensions = []
+uvicorn = []
 zipp = []
