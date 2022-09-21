@@ -1,5 +1,6 @@
 import ast
 import functools
+import json
 import typing as t
 
 from pydantic import BaseModel
@@ -122,7 +123,7 @@ class Api:
             async def wrapper(*args, **kwargs):
                 response = await func(*args, **kwargs)
                 if isinstance(response, BaseModel):
-                    return JSONResponse(response.dict(), status_code, headers, media_type, background)
+                    return JSONResponse(json.loads(response.json()), status_code, headers, media_type, background)
 
                 return response
 
