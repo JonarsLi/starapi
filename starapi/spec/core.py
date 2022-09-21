@@ -13,8 +13,8 @@ class Spec:
     def add_openapi(self, version: str) -> None:
         self.definition.openapi = version
 
-    def add_info(self, title: str, version: str) -> None:
-        self.definition.info = construct.Info(title=title, version=version)
+    def add_info(self, title: str, version: str, description: str = None) -> None:
+        self.definition.info = construct.Info(title=title, version=version, description=description)
 
     def update_tag(self, name: str, description: str) -> None:
         if self.definition.tags is None:

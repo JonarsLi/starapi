@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "starapi"
-version = "0.1.2"
+version = "0.1.3"
 description = "StarAPI based on starlette and pydantic."
 authors = ["jonars <jonarsli13@gmail.com>"]
 license = "MIT"

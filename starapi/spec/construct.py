@@ -61,8 +61,9 @@ class Tag(BaseModel):
 
 
 class Info(BaseModel):
-    title: str
-    version: str
+    title: str = "StarAPI"
+    version: str = "0.0.1"
+    description: t.Optional[str]
 
 
 class Definition(BaseModel):
