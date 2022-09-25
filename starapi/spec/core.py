@@ -1,3 +1,4 @@
+import copy
 import typing as t
 
 from pydantic import BaseModel
@@ -128,7 +129,7 @@ class Spec:
         self._update_schemas({serializer.__name__: serializer.schema()})
 
     def _update_nested_schema(self, serializer: BaseModel) -> None:
-        schema = serializer.schema(ref_template="#/components/schemas/{model}")
+        schema = copy.copy(serializer.schema(ref_template="#/components/schemas/{model}"))
         definitions = schema.pop("definitions")
         self._update_schemas({serializer.__name__: schema})
         for key, value in definitions.items():
