@@ -25,6 +25,7 @@ class Api:
             @functools.wraps(func)
             async def wrapper(*args, **kwargs):
                 request: Request = cls._get_request(args)
+                cls._trace_request(request, {"query": dict(request.query_params)})
                 args = args + (serializer(**request.query_params),)
                 return await func(*args, **kwargs)
 
@@ -43,6 +44,7 @@ class Api:
             @functools.wraps(func)
             async def wrapper(*args, **kwargs):
                 request: Request = cls._get_request(args)
+                cls._trace_request(request, {"path": dict(request.path_params)})
                 args = args + (serializer(**request.path_params),)
                 return await func(*args, **kwargs)
 
@@ -61,6 +63,7 @@ class Api:
             @functools.wraps(func)
             async def wrapper(*args, **kwargs):
                 request: Request = cls._get_request(args)
+                cls._trace_request(request, {"headers": dict(request.headers)})
                 args = args + (serializer(**request.headers),)
                 return await func(*args, **kwargs)
 
@@ -94,6 +97,7 @@ class Api:
                     body = await request.body()
                     data = ast.literal_eval(body.decode("utf-8"))
 
+                cls._trace_request(request, {"body": data})
                 args = args + (serializer(**data),)
                 return await func(*args, **kwargs)
 
@@ -155,3 +159,11 @@ class Api:
                 return arg
 
         raise ValueError("Request object not found.")
+
+    @classmethod
+    def _trace_request(self, request: Request, data: dict) -> None:
+        if hasattr(request.state, "_trace_request"):
+            request.state._trace_request.update(data)
+            return None
+
+        request.state._trace_request = data
