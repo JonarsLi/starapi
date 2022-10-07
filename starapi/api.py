@@ -63,7 +63,6 @@ class Api:
             @functools.wraps(func)
             async def wrapper(*args, **kwargs):
                 request: Request = cls._get_request(args)
-                cls._trace_request(request, {"headers": dict(request.headers)})
                 args = args + (serializer(**request.headers),)
                 return await func(*args, **kwargs)
 
