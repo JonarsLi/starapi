@@ -1,14 +1,42 @@
 import ast
 import functools
+import inspect
 import json
 import typing as t
 
 from pydantic import BaseModel
+from starlette._utils import is_async_callable
 from starlette.background import BackgroundTask
+from starlette.concurrency import run_in_threadpool
+from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from .dependency import Dependency
 from .spec.core import Spec
+
+
+class StarAPIEndpoint(HTTPEndpoint):
+    async def dispatch(self) -> None:
+        request = Request(self.scope, receive=self.receive)
+        handler_name = "get" if request.method == "HEAD" and not hasattr(self, "head") else request.method.lower()
+
+        handler: t.Callable[[Request], t.Any] = getattr(self, handler_name, self.method_not_allowed)
+        is_async = is_async_callable(handler)
+
+        # Auto inject obj from dependency registry.
+        args = (request,)
+        sig = inspect.signature(handler)
+        for parameter in sig.parameters.values():
+            if parameter.annotation.__name__ in Dependency.registry:
+                instance = Dependency.get(parameter.annotation.__name__)
+                args = args + (instance,)
+
+        if is_async:
+            response = await handler(*args)
+        else:
+            response = await run_in_threadpool(handler, *args)
+        await response(self.scope, self.receive, self.send)
 
 
 class Api:

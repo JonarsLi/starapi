@@ -87,7 +87,6 @@ class RedocEndpoint(HTTPEndpoint):
                 <redoc spec-url="{{ url }}"></redoc>
                 <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
             </body>
-            
             </html>
         """
         )

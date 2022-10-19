@@ -4,13 +4,23 @@ import typing as t
 
 
 class Dependency:
-    @classmethod
-    def add(cls, name: str, service: t.Any) -> None:
-        setattr(cls, f"__{name}", service)
+    registry = []
 
     @classmethod
-    def override(cls, name: str, service: t.Any) -> None:
-        setattr(cls, f"__{name}", service)
+    def add(cls, name: str, obj: t.Any) -> None:
+        if name in cls.registry:
+            raise ValueError("Name duplicate addition.")
+
+        cls.registry.append(name)
+        setattr(cls, f"__{name}", obj)
+
+    @classmethod
+    def get(cls, name: str) -> None:
+        return copy.copy(getattr(cls, f"__{name}"))
+
+    @classmethod
+    def override(cls, name: str, obj: t.Any) -> None:
+        setattr(cls, f"__{name}", obj)
 
     @classmethod
     def inject(cls, name: str) -> t.Any:
