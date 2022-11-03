@@ -67,7 +67,7 @@ class Info(BaseModel):
 
 
 class Definition(BaseModel):
-    openapi: t.Optional[str]
+    openapi: str = "3.0.0"
     info: t.Optional[Info]
     tags: t.Optional[t.List[Tag]]
     paths: t.Optional[t.Dict[str, t.Any]]

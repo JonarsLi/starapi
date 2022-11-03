@@ -28,9 +28,10 @@ class StarAPIEndpoint(HTTPEndpoint):
         args = (request,)
         sig = inspect.signature(handler)
         for parameter in sig.parameters.values():
-            if parameter.annotation.__name__ in Dependency.registry:
-                instance = Dependency.get(parameter.annotation.__name__)
-                args = args + (instance,)
+            for container in Dependency.registry:
+                if parameter.annotation.__name__ == container.name:
+                    instance = Dependency.get(parameter.annotation.__name__)
+                    args = args + (instance,)
 
         if is_async:
             response = await handler(*args)
