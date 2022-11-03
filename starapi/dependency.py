@@ -44,10 +44,11 @@ class Dependency:
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 sig = inspect.signature(func)
-                for parameter in sig.parameters.values():
+                for para in sig.parameters.values():
+                    name = para.annotation.__name__ if isinstance(para.annotation, type) else para.annotation
                     for container in Dependency.registry:
-                        if parameter.annotation.__name__ == container.name:
-                            instance = Dependency.get(parameter.annotation.__name__)
+                        if name == container.name:
+                            instance = Dependency.get(name)
                             args = args + (instance,)
 
                 return func(*args, **kwargs)
@@ -55,10 +56,11 @@ class Dependency:
             @functools.wraps(func)
             async def async_wrapper(*args, **kwargs):
                 sig = inspect.signature(func)
-                for parameter in sig.parameters.values():
+                for para in sig.parameters.values():
+                    name = para.annotation.__name__ if isinstance(para.annotation, type) else para.annotation
                     for container in Dependency.registry:
-                        if parameter.annotation.__name__ == container.name:
-                            instance = Dependency.get(parameter.annotation.__name__)
+                        if name == container.name:
+                            instance = Dependency.get(name)
                             args = args + (instance,)
 
                 return await func(*args, **kwargs)
