@@ -27,12 +27,8 @@ class StarAPIEndpoint(HTTPEndpoint):
         # Auto inject obj from dependency registry.
         args = (request,)
         sig = inspect.signature(handler)
-        for para in sig.parameters.values():
-            name = para.annotation.__name__ if isinstance(para.annotation, type) else para.annotation
-            for container in Dependency.registry:
-                if name == container.name:
-                    instance = Dependency.get(name)
-                    args = args + (instance,)
+        for container in Dependency.iterate(sig):
+            args += (container.service(*container.args, **container.kwargs),)
 
         if is_async:
             response = await handler(*args)

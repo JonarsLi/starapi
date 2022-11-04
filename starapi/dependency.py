@@ -25,7 +25,7 @@ class Dependency:
         cls.registry.append(ServiceContainer(name=name, service=service, args=args, kwargs=kwargs))
 
     @classmethod
-    def get(cls, name: str) -> None:
+    def get(cls, name: str) -> t.TypeVar("T"):
         for container in cls.registry:
             if name == container.name:
                 return container.service(*container.args, **container.kwargs)
@@ -39,29 +39,27 @@ class Dependency:
                 container.kwargs = kwargs
 
     @classmethod
+    def iterate(cls, sig: inspect.Signature) -> t.Iterator[ServiceContainer]:
+        for parameter in sig.parameters.values():
+            name = parameter.annotation.__name__ if isinstance(parameter.annotation, type) else parameter.annotation
+            yield from filter(lambda container: name == container.name, cls.registry)
+
+    @classmethod
     def inject(cls) -> t.Any:
         def decorator(func):
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 sig = inspect.signature(func)
-                for para in sig.parameters.values():
-                    name = para.annotation.__name__ if isinstance(para.annotation, type) else para.annotation
-                    for container in Dependency.registry:
-                        if name == container.name:
-                            instance = Dependency.get(name)
-                            args = args + (instance,)
+                for container in cls.iterate(sig):
+                    args += (container.service(*container.args, **container.kwargs),)
 
                 return func(*args, **kwargs)
 
             @functools.wraps(func)
             async def async_wrapper(*args, **kwargs):
                 sig = inspect.signature(func)
-                for para in sig.parameters.values():
-                    name = para.annotation.__name__ if isinstance(para.annotation, type) else para.annotation
-                    for container in Dependency.registry:
-                        if name == container.name:
-                            instance = Dependency.get(name)
-                            args = args + (instance,)
+                for container in cls.iterate(sig):
+                    args += (container.service(*container.args, **container.kwargs),)
 
                 return await func(*args, **kwargs)
 
