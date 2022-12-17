@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "starapi"
-version = "0.3.2"
+version = "0.3.3"
 description = "StarAPI based on starlette and pydantic."
 authors = ["jonars <jonarsli13@gmail.com>"]
 license = "MIT"
@@ -13,6 +13,7 @@ starlette = "^0.20.4"
 pydantic = "^1.10.2"
 Jinja2 = "^3.1.2"
 python-multipart = {version = "^0.0.5", optional = true}
+google-cloud-storage = {version = "^2.7.0", optional = false}
 
 [tool.poetry.dev-dependencies]
 black = "^22.8.0"
